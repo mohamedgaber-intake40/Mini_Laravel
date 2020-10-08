@@ -46,9 +46,10 @@ class Database extends Connection
      * @param $table
      * @param array $params
      * @param array $conditions
+     * @param null $class
      * @return array
      */
-    public static function select($table, Array $params=[], Array $conditions =[])
+    public static function select($table, Array $params=[], Array $conditions =[],$class = null)
     {
         $db = self::getInstance();
 
@@ -72,7 +73,12 @@ class Database extends Connection
         $data = [];
         if ($result)
         {
-            while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
+            if($class){
+                $result->setFetchMode(\PDO::FETCH_CLASS,$class);
+            }else{
+                $result->setFetchMode(\PDO::FETCH_OBJ);
+            }
+            while ($row = $result->fetch()) {
                 $data[] = $row;
             }
         }

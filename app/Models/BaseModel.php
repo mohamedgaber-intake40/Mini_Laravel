@@ -4,8 +4,32 @@
 namespace app\Models;
 
 
-class BaseModel
+use Core\QueryBuilder;
+use Database\Database;
+
+class BaseModel implements Model
 {
+    protected static $table;
+
+    public static function all()
+    {
+        return Database::select(static::$table,[],[],get_called_class());
+    }
+
+    public static function create($data)
+    {
+        return Database::insert(static::$table,$data);
+    }
+
+    public static function where($conditions)
+    {
+        return Database::select(static::$table, [], $conditions,get_called_class());
+    }
+
+    public static function query()
+    {
+        return new QueryBuilder(static::$table,get_called_class());
+    }
 
     public function load($relation, $primary_key , $foreign_key, array $conditions = [], $one = false)
     {
@@ -31,6 +55,7 @@ class BaseModel
 
         $this->$relation = $relation_data;
     }
+    
     protected function has_attribute($attribute)
     {
         return property_exists(static::class,$attribute);
