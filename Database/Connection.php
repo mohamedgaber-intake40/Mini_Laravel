@@ -86,6 +86,12 @@ class Connection
         return $result;
     }
 
+    public static function truncateTable($table)
+    {
+        $query = "truncate $table";
+        return  self::excute($query);
+    }
+
     public static function close_Connection()
     {
         self::$conn = null ;

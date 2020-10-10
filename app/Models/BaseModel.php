@@ -61,5 +61,10 @@ class BaseModel implements Model
         return property_exists(static::class,$attribute);
     }
 
+    public static function truncate()
+    {
+        return Database::truncate(self::$table);
+    }
+
 
 }

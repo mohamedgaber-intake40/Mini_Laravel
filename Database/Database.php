@@ -88,6 +88,14 @@ class Database extends Connection
 
     }
 
+    public static function truncate($table)
+    {
+        $db = self::getInstance();
+        $result = $db->truncateTable($table);
+        Connection::close_Connection();
+        return $result;
+    }
+
 
 
 }
