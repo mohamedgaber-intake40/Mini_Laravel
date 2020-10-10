@@ -1,5 +1,5 @@
 <?php
-namespace Database;
+namespace Core\Database;
 class Database extends Connection
 {
     protected function __construct()
@@ -16,11 +16,11 @@ class Database extends Connection
         }
     }
 
-	/**
-	 * @param $table
-	 * @param array $params
-	 * @return false|\PDOStatement $result
-	 */
+    /**
+     * @param $table
+     * @param array $params
+     * @return int
+     */
 	public static function insert($table ,Array $params)
 	{
 		$db = self::getInstance();
@@ -94,6 +94,37 @@ class Database extends Connection
         $result = $db->truncateTable($table);
         Connection::close_Connection();
         return $result;
+    }
+
+    public static function delete($table,$id,$primary_key)
+    {
+        $db = self::getInstance();
+        $sql = "delete from $table where $primary_key = ?";
+        $result = $db->excute($sql,[$id]);
+        Connection::close_Connection();;
+        return $result;
+
+    }
+
+    public static function update($table,$id,$params,$primary_key)
+    {
+        $db = self::getInstance();
+        $params_string = self::generateParamsString($params);
+        $sql = "update $table set $params_string where $primary_key = ?";
+        $params [] = $id;
+        $result = $db->excute($sql,$params);
+        Connection::close_Connection();;
+        return $result;
+    }
+
+    private static function generateParamsString($params)
+    {
+        $params_string='';
+        foreach ($params as $key => $param)
+        {
+            $params_string .= empty($params_string) ? "$key = ?" :  " , $key = ?";
+        }
+        return $params_string;
     }
 
 

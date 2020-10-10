@@ -4,8 +4,9 @@
 namespace Core;
 
 
-use Database\Connection;
-use Database\Database;
+use app\Models\BaseModel;
+use Core\Database\Connection;
+use Core\Database\Database;
 
 class QueryBuilder
 {
@@ -37,6 +38,9 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * @return BaseModel[]
+     */
     public function get()
     {
         $result = $this->db->executeQuery($this->sql,[]);

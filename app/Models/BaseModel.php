@@ -5,15 +5,30 @@ namespace app\Models;
 
 
 use Core\QueryBuilder;
-use Database\Database;
+use Core\Database\Database;
 
 class BaseModel implements Model
 {
     protected static $table;
+    protected  static $primary_key = 'id';
 
+    /**
+     * @return $this[];
+     */
     public static function all()
     {
         return Database::select(static::$table,[],[],get_called_class());
+    }
+
+
+    /**
+     * @param $id
+     * @param string $primary_key
+     * @return $this
+     */
+    public static function find($id)
+    {
+        return Database::select(static::$table,[],[static::$primary_key=>$id],get_called_class())[0];
     }
 
     public static function create($data)
@@ -21,6 +36,10 @@ class BaseModel implements Model
         return Database::insert(static::$table,$data);
     }
 
+    /**
+     * @param $conditions
+     * @return $this[]
+     */
     public static function where($conditions)
     {
         return Database::select(static::$table, [], $conditions,get_called_class());
@@ -33,6 +52,7 @@ class BaseModel implements Model
 
     public function load($relation, $primary_key , $foreign_key, array $conditions = [], $one = false)
     {
+
         $relation_data=[];
 
         if($this->has_attribute($foreign_key)){
@@ -63,7 +83,19 @@ class BaseModel implements Model
 
     public static function truncate()
     {
-        return Database::truncate(self::$table);
+        return Database::truncate(static::$table);
+    }
+
+    public function delete()
+    {
+        $primary_key = static::$primary_key;
+        return Database::delete(static::$table,$this->$primary_key, static::$primary_key );
+    }
+
+    public function update($params)
+    {
+        $primary_key = static::$primary_key;
+        return Database::update(static::$table, $this->$primary_key, $params ,static::$primary_key);
     }
 
 
