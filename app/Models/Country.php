@@ -10,7 +10,7 @@ namespace app\Models;
 
 
 
-class Country extends BaseModel
+class Country extends Model
 {
     protected static  $table = "countries";
 
