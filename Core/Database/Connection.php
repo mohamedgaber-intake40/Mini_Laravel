@@ -1,5 +1,5 @@
 <?php
-namespace Database;
+namespace Core\Database;
 
 //require_once $_SERVER['DOCUMENT_ROOT'] . "/med_survey/Config/database.php";
 
@@ -66,7 +66,7 @@ class Connection
 		return $num;
 	}
 
-	private static function excute($query, $params = [])
+	protected static function excute($query, $params = [])
     {
         $result = false;
         $params = array_values($params);
@@ -84,6 +84,12 @@ class Connection
             echo  $e->getMessage();
         }
         return $result;
+    }
+
+    public static function truncateTable($table)
+    {
+        $query = "truncate $table";
+        return  self::excute($query);
     }
 
     public static function close_Connection()

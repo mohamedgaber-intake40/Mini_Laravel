@@ -8,7 +8,15 @@ class Dispatcher
     public function dispatch()
     {
         $this->request = new Request();
-        Router::parse($this->request->url, $this->request);
+        try {
+            Router::parse($this->request->url, $this->request);
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+            if(DEBUG){
+                var_dump( $e->getTrace());
+            }
+            exit;
+        }
         $controller = $this->loadController();
         $action = $this->request->action;
         echo $controller->$action($this->request);

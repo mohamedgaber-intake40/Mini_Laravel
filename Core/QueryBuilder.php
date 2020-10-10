@@ -4,19 +4,22 @@
 namespace Core;
 
 
-use Database\Connection;
-use Database\Database;
+use app\Models\BaseModel;
+use Core\Database\Connection;
+use Core\Database\Database;
 
 class QueryBuilder
 {
     private $sql;
     private $db;
     private $table;
+    private $class_name;
 
-    public function __construct($table)
+    public function __construct($table,$class_name=null)
     {
         $this->sql = "select * from $table";
         $this->table = $table;
+        $this->class_name = $class_name;
         $this->db = Database::getInstance();
     }
 
@@ -35,14 +38,22 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * @return BaseModel[]
+     */
     public function get()
     {
         $result = $this->db->executeQuery($this->sql,[]);
 
         $data = [];
 
-        while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
-            $data[] = (object) $row;
+        if($this->class_name){
+            $result->setFetchMode(\PDO::FETCH_CLASS,$this->class_name);
+        }else{
+            $result->setFetchMode(\PDO::FETCH_OBJ);
+        }
+        while ($row = $result->fetch()) {
+            $data[] = $row;
         }
         Connection::close_Connection();
         return  $data ;
