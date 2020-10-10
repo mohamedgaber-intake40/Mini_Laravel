@@ -1,11 +1,10 @@
 <?php
 
 
-namespace app\Models;
+namespace Core;
 
-
-use Core\QueryBuilder;
 use Core\Database\Database;
+use Core\Interfaces\Model;
 
 class BaseModel implements Model
 {
@@ -23,7 +22,6 @@ class BaseModel implements Model
 
     /**
      * @param $id
-     * @param string $primary_key
      * @return $this
      */
     public static function find($id)

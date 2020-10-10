@@ -3,7 +3,7 @@
 namespace app\Models;
 
 
-class ModelRoleModel extends BaseModel
+class ModelRoleModel extends Model
 {
     protected static $table = '';
 }
