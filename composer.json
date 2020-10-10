@@ -1,4 +1,13 @@
 {
+  "name": "mohamed-gaber/mini-laravel",
+  "description": "MVC framework with native PHP looks like Laravel",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mohamed Gaber",
+      "email": "gaberm514@gmail.com"
+    }
+  ],
   "require": {
     "phpoffice/phpspreadsheet": "^1.14",
     "ext-pdo": "*"
