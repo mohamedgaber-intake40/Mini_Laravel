@@ -118,9 +118,21 @@ class Request
 
     }
 
+    public function all()
+    {
+        return $this->body;
+    }
+
     public function __get($property)
     {
-        return isset($this->body[$property]) ? $this->body[$property] :  null;
+         if(isset($this->body[$property]))
+             return $this->body[$property];
+
+        if(isset($this->query[$property]))
+            return $this->query[$property];
+
+         if(isset($this->params[$property]))
+             return $this->params[$property];
     }
 }
 
