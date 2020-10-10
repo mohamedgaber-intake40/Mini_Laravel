@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+use Core\Kernel\Handler;
+
+require_once 'autoload.php';
+
+$command = $argv[1];
+$class_name = $argv[2];
+
+define('ROOT_DIR',str_replace('\\', '/', __DIR__));
+
+Handler::create($command,$class_name);

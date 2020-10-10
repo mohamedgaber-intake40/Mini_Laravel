@@ -8,7 +8,7 @@
 
 function autoLoader($class)
 {
-    $path = ROOT . $class . '.php';
+    $path = __DIR__ .'/'. $class . '.php';
     $path =  str_replace('\\', '/', $path);
 
     if (is_file($path)) {

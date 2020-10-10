@@ -20,7 +20,7 @@ Route::get('countries','CountryController@index')->name('countries.index');
 
 Route::get('users/export','UserController@export');
 
-Route::get('test','TestController@show')->name('test.show');
+Route::get('test','TestController@test')->name('test.show');
 Route::get('avatar','TestController@showAvatar')->name('avatar');
 Route::get('users/create','UserController@create')->name('users.create');
 Route::post('users','UserController@store')->name('users.store');

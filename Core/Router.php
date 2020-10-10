@@ -7,6 +7,11 @@ class Router
     public static $routes = [];
     private static $instance;
 
+    /**
+     * @param $url
+     * @param $request
+     * @throws \Exception
+     */
     static public function parse($url, $request)
     {
 
@@ -22,7 +27,8 @@ class Router
 
             }
             if(!isset($request->controller) || !isset($request->action)){
-                die('404 Not Found'); // TODO UPDATE
+//                die('404 Not Found'); // TODO UPDATE
+                throw new \Exception("404 Not Found Route: $request->url" );
             }
 
     }
