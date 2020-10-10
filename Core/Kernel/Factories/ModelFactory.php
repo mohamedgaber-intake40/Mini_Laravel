@@ -9,40 +9,40 @@
 namespace Core\Kernel\Factories;
 
 
-class ControllerFactory
+class ModelFactory
 {
     private $role_model;
-    private $controllers_directory = '/app/Controllers/';
+    private $models_directory = '/app/Models/';
     private $factories_directory = '/Core/Kernel/Factories/';
     private $role_models_directory = '/Core/Kernel/RoleModels/';
     private $destination;
 
 
-    public function __construct($controller_name)
+    public function __construct($model_name)
     {
-        $this->role_model = ROOT_DIR . $this->role_models_directory . 'ControllerRoleModel.php';
-        $this->controllers_directory = ROOT_DIR . $this->controllers_directory ;
-        $this->destination =  $this->controllers_directory . "$controller_name.php";
+        $this->role_model = ROOT_DIR . $this->role_models_directory . 'ModelRoleModel.php';
+        $this->models_directory = ROOT_DIR . $this->models_directory ;
+        $this->destination =  $this->models_directory . "$model_name.php";
         $this->factories_directory = ROOT_DIR . $this->factories_directory ;
 
         if($this->checkFileExists())
         {
-            echo "Controller Already Exists";
+            echo "Model Already Exists";
             return;
         }
-        $this->create($controller_name);
+        $this->create($model_name);
     }
-    private function create($controller_name)
+    private function create($model_name)
     {
         copy($this->role_model,$this->destination);
 
         $content =  file_get_contents($this->destination);
-        $content = str_replace('ControllerRoleModel',"$controller_name",$content);
+        $content = str_replace('ModelRoleModel',"$model_name",$content);
 
         $file = fopen($this->destination,'w');
         fwrite($file,$content);
         fclose($file);
-        echo 'Controller Created Successfully';
+        echo 'Model Created Successfully';
     }
 
     private function checkFileExists()
