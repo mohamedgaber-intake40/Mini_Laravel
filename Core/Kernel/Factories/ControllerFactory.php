@@ -11,16 +11,14 @@ namespace Core\Kernel\Factories;
 
 class ControllerFactory extends Factory
 {
-    private $role_model;
-    private $controllers_directory = '/app/Controllers/';
-    private $factories_directory = '/Core/Kernel/Factories/';
-    private $role_models_directory = '/Core/Kernel/RoleModels/';
-    private $destination;
 
-    public function __construct($name, $type)
+    public function __construct($name)
     {
-        parent::__construct($name, $type);
+        parent::__construct();
+        $this->type = 'Controller';
+        $this->destination_directory =  '/app/Controllers/';
+        $this->role_model =  $this->role_models_directory . "ControllerRoleModel.php";
+        $this->make($name);
     }
-
 
 }

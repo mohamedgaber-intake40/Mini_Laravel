@@ -12,9 +12,13 @@ namespace Core\Kernel\Factories;
 class ModelFactory extends Factory
 {
 
-    public function __construct($name, $type)
+    public function __construct($name)
     {
-        parent::__construct($name, $type);
+        parent::__construct();
+        $this->type = 'Model';
+        $this->destination_directory =  '/app/Models/';
+        $this->role_model =  $this->role_models_directory . "ModelRoleModel.php";
+        $this->make($name);
     }
 
 }

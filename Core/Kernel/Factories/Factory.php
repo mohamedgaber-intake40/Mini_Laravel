@@ -11,26 +11,24 @@ namespace Core\Kernel\Factories;
 
 class Factory
 {
-    private $role_model;
+    protected $role_model;
     private $factories_directory = '/Core/Kernel/Factories/';
-    private $role_models_directory = '/Core/Kernel/RoleModels/';
-    private $destination;
-    private $destination_directory;
-    private $type;
+    protected $role_models_directory = '/Core/Kernel/RoleModels/';
+    protected $destination;
+    protected $destination_directory;
+    protected $type;
 
 
-    public function __construct($name,$type)
+    public function __construct()
     {
-        $this->type = ucfirst($type) ;
-        $type_plural = $this->type . 's';
-        $role_model_file_name = $this->type . "RoleModel.php";
-
-        $this->role_model = ROOT_DIR .$this->role_models_directory. $role_model_file_name;
-        $this->destination_directory = ROOT_DIR . "/app/$type_plural/";
-
-
-        $this->destination =  $this->destination_directory . "$name.php";
         $this->factories_directory = ROOT_DIR . $this->factories_directory ;
+    }
+    protected function make($name)
+    {
+        $this->resolveFullPath();
+
+
+        $this->destination = $this->destination_directory. "$name.php";
 
         if($this->checkFileExists())
         {
@@ -39,6 +37,7 @@ class Factory
         }
         $this->create($name);
     }
+
     private function create($name)
     {
         copy($this->role_model,$this->destination);
@@ -50,6 +49,12 @@ class Factory
         fwrite($file,$content);
         fclose($file);
         echo "$this->type Created Successfully";
+    }
+
+    private function resolveFullPath()
+    {
+        $this->destination_directory = ROOT_DIR . $this->destination_directory;
+        $this->role_model = ROOT_DIR . $this->role_model;
     }
 
     private function checkFileExists()
