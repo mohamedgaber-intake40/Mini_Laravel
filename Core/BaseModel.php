@@ -59,7 +59,7 @@ class BaseModel implements Model
         return new QueryBuilder(static::$table,get_called_class());
     }
 
-    public function loadRelation($relation, $primary_key , $foreign_key, array $conditions = [], $one = false)
+    private function loadRelation($relation, $primary_key , $foreign_key, array $conditions = [], $one = false)
     {
         $relation_data=[];
 
