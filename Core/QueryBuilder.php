@@ -4,7 +4,6 @@
 namespace Core;
 
 
-use app\Models\BaseModel;
 use Core\Database\Connection;
 use Core\Database\Database;
 
@@ -35,6 +34,18 @@ class QueryBuilder
     {
 //        str_replace('*',"*".$this->table.",*",$this->sql);
         $this->sql .= " inner join $table on $first_column = $second_column ";
+        return $this;
+    }
+
+    public function orderBy($column,$direction = 'asc')
+    {
+        $this->sql .= " order by $column $direction" ;
+        return $this;
+    }
+
+    public function limit($limit)
+    {
+        $this->sql .= " limit $limit";
         return $this;
     }
 
