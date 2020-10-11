@@ -88,6 +88,28 @@ class Database extends Connection
 
     }
 
+    public static function whereIn($table,$column, Array $arr=[] ,$class = null)
+    {
+        $db = self::getInstance();
+        $in  = str_repeat('?,', count($arr) - 1) . '?';
+        $sql = "select * from $table where $column in ($in) ";
+        $result = $db->executeQuery($sql,$arr);
+        $data = [];
+        if ($result)
+        {
+            if($class){
+                $result->setFetchMode(\PDO::FETCH_CLASS,$class);
+            }else{
+                $result->setFetchMode(\PDO::FETCH_OBJ);
+            }
+            while ($row = $result->fetch()) {
+                $data[] = $row;
+            }
+        }
+        Connection::close_Connection();
+        return $data;
+    }
+
     public static function truncate($table)
     {
         $db = self::getInstance();
@@ -100,7 +122,7 @@ class Database extends Connection
     {
         $db = self::getInstance();
         $sql = "delete from $table where $primary_key = ?";
-        $result = $db->excute($sql,[$id]);
+        $result = $db->execute($sql,[$id]);
         Connection::close_Connection();;
         return $result;
 
@@ -112,7 +134,7 @@ class Database extends Connection
         $params_string = self::generateParamsString($params);
         $sql = "update $table set $params_string where $primary_key = ?";
         $params [] = $id;
-        $result = $db->excute($sql,$params);
+        $result = $db->execute($sql,$params);
         Connection::close_Connection();;
         return $result;
     }
