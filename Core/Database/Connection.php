@@ -44,7 +44,7 @@ class Connection
         {
             $result = false ;
             echo  $e->getMessage();
-            echo PHP_EOL . $query;
+            echo "<p>". $query. "</p>";
         }
         return $result;
     }

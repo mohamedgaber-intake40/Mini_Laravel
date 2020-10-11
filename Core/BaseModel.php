@@ -132,9 +132,16 @@ class BaseModel implements Model
         return $relation::query()->where([$foreign_key => $this->$primary_key]);
     }
 
-
+    /**
+     * @param $pivot_relation
+     * @param $relation
+     * @param $pivot_foreign_key
+     * @param $pivot_foreign_key2
+     * @return QueryBuilder
+     */
     protected function belongToMany($pivot_relation , $relation, $pivot_foreign_key, $pivot_foreign_key2)
     {
+        $relation_class = $relation;
         $relation_data=[];
         $primary_key = static::$primary_key;
 
@@ -150,7 +157,15 @@ class BaseModel implements Model
         $relation = strtolower(explode('\\',$relation)[2]) . 's';
         $this->$relation = $relation_data;
 
-        return $this->$relation;
+        $first_column = $relation_class::$table . '.' . $relation_class::$primary_key;
+        $second_column = $pivot_relation::$table . '.' . $pivot_foreign_key;
+        $third_column = $pivot_relation::$table . '.' . $pivot_foreign_key2;
+
+        $primary_key = static::$primary_key;
+
+        return $relation_class::query()
+            ->join( $pivot_relation::$table , $first_column , $second_column )
+            ->where([ $third_column => $this->$primary_key]);
     }
 
     public function load($relations)

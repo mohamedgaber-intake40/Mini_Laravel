@@ -60,27 +60,36 @@ class QueryBuilder
 
     public function where($conditions)
     {
-        if(!count($this->conditions))
+        if(!strpos($this->sql,'where'))
             $this->sql .= ' where';
+        else
+            $this->sql .= ' and';
 
         $this->conditions = array_merge($this->conditions,$conditions);
+        $this->generateConditionsString();
 
         return $this;
     }
 
     private function generateConditionsString()
     {
-        $this->has_conditions_string = true;
         $filters = "";
+        $flag = false;
 
         foreach ($this->conditions as $key => $value)
         {
             $filters .= " $key = ?";
-            empty($this->values) ? $filters.= " and " : null;
+            empty($filters) ? $filters.= " and " : null;
 
             $this->values[] = $value ;
+            $flag = true;
         }
         $this->sql .= " $filters";
+
+        $this->has_conditions_string = true;
+        $this->conditions = [];
+
+
     }
 
     /**
