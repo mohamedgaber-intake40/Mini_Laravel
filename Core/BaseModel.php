@@ -177,7 +177,16 @@ class BaseModel implements Model
         }
     }
 
+    public function __get($name)
+    {
+        if(!$this->has_attribute($name))
+        {
+            if(method_exists($this,$name))
+                $this->$name();
+        }
+        return $this->$name;
 
+    }
 
 
 }
