@@ -11,5 +11,8 @@
   "require": {
     "phpoffice/phpspreadsheet": "^1.14",
     "ext-pdo": "*"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^5.2"
   }
 }
