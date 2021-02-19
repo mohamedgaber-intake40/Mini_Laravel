@@ -1,10 +1,10 @@
 <?php
 use Core\Dispatcher;
 
-define('WEBROOT', str_replace("public/index.php", "", $_SERVER["SCRIPT_NAME"]));
+$ds = DIRECTORY_SEPARATOR;
+define('WEBROOT', str_replace("public".$ds."index.php", "", $_SERVER["SCRIPT_NAME"]));
 
-define('ROOT', str_replace("public/index.php", "", $_SERVER["SCRIPT_FILENAME"]));
-
+define('ROOT', str_replace("public".$ds."index.php", "", $_SERVER["SCRIPT_FILENAME"]));
 require(ROOT . '/'.'bootstrap.php');
 
 $dispatcher = new Dispatcher();
