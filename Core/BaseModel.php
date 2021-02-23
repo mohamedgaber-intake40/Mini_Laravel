@@ -4,6 +4,7 @@
 namespace Core;
 
 use Core\Database\Database;
+use Core\Exceptions\ModelNotFoundException;
 use Core\Interfaces\Model;
 
 class BaseModel implements Model
@@ -26,7 +27,13 @@ class BaseModel implements Model
      */
     public static function find($id)
     {
-        return Database::select(static::$table,[],[static::$primary_key=>$id],get_called_class())[0];
+        return $result = Database::select(static::$table,[],[static::$primary_key=>$id],get_called_class())[0] ?? null;
+    }
+
+    public static function findOrFail($id)
+    {
+        if(!self::find($id))
+            throw new ModelNotFoundException('model not found');
     }
 
     public static function create($data)

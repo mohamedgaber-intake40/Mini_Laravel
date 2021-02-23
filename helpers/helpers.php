@@ -11,23 +11,7 @@ use Core\Router;
 
 function route($name , $params = null)
 {
-    $routes = Router::$routes;
-    $found_route = '';
-    foreach ($routes as $route)
-    {
-        if($route->name == $name)
-            $found_route = $route->url;
-    }
-    if($params)
-    {
-        $found_route =str_replace(':','',$found_route);
-        foreach ($params as $key => $param)
-        {
-            $found_route = preg_replace('/'.$key.'\b/', $param, $found_route);
-        }
-    }
-    return !empty($found_route) ? $found_route : die("404 NOT FOUND ROUTE NAME $name") ;
-
+    return Router::get_instance()->getParsedRoute($name,$params);
 }
 
 function json_response( Array $message = [] , $code = 200)
@@ -62,4 +46,23 @@ function redirect($path)
 function assets($path)
 {
     return URL .'public/'. $path;
+}
+
+function app()
+{
+    return \Core\Application::getInstance();
+}
+
+function request()
+{
+    return \Core\Request::getInstance();
+}
+
+function view($view,$data=[])
+{
+    extract($data);
+    $path_arr = explode('.',$view);
+    $file_path = implode('/',$path_arr);
+    $full_path =  ROOT . 'views/' . $file_path . '.php';
+    return require ($full_path);
 }

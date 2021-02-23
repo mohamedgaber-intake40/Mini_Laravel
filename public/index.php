@@ -7,8 +7,6 @@ define('WEBROOT', str_replace("public".$ds."index.php", "", $_SERVER["SCRIPT_NAM
 define('ROOT', str_replace("public".$ds."index.php", "", $_SERVER["SCRIPT_FILENAME"]));
 require(ROOT . '/'.'bootstrap.php');
 
-$dispatcher = new Dispatcher();
-
-$dispatcher->dispatch();
-
+$app = app();
+$app->dispatch();;
 
