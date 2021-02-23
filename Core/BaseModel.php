@@ -4,6 +4,7 @@
 namespace Core;
 
 use Core\Database\Database;
+use Core\Exceptions\ModelNotFoundException;
 use Core\Interfaces\Model;
 
 class BaseModel implements Model
@@ -26,7 +27,13 @@ class BaseModel implements Model
      */
     public static function find($id)
     {
-        return Database::select(static::$table,[],[static::$primary_key=>$id],get_called_class())[0];
+        return $result = Database::select(static::$table,[],[static::$primary_key=>$id],get_called_class())[0] ?? null;
+    }
+
+    public static function findOrFail($id)
+    {
+        if(!self::find($id))
+            throw new ModelNotFoundException('model not found');
     }
 
     public static function create($data)
@@ -36,11 +43,22 @@ class BaseModel implements Model
 
     /**
      * @param $conditions
+     * @param array $columns
      * @return $this[]
      */
-    public static function where($conditions)
+    public static function where($conditions,$columns=[])
     {
-        return Database::select(static::$table, [], $conditions,get_called_class());
+        return Database::select(static::$table, $columns, $conditions,get_called_class());
+    }
+
+    /**
+     * @param $column
+     * @param $arr
+     * @return $this[]
+     */
+    public static function whereIn($column,$arr)
+    {
+        return Database::whereIn(static::$table,$column,$arr,get_called_class());
     }
 
     public static function query()
@@ -48,12 +66,12 @@ class BaseModel implements Model
         return new QueryBuilder(static::$table,get_called_class());
     }
 
-    public function load($relation, $primary_key , $foreign_key, array $conditions = [], $one = false)
+    private function loadRelation($relation, $primary_key , $foreign_key, array $conditions = [], $one = false)
     {
-
         $relation_data=[];
 
-        if($this->has_attribute($foreign_key)){
+//        $primary_key = $relation::$primary_key;
+        if($this->has_attribute($foreign_key) && $foreign_key != static::$primary_key){
             $relation_conditions = [$primary_key => $this->$foreign_key];
             $relation_conditions = array_merge($relation_conditions , $conditions);
             $relation_data = $relation::where($relation_conditions);
@@ -62,7 +80,6 @@ class BaseModel implements Model
             $relation_conditions = array_merge($relation_conditions , $conditions);
             $relation_data = $relation::where($relation_conditions);
         }
-
         $relation = strtolower(explode('\\',$relation)[2]);
 
         if($one){
@@ -95,6 +112,79 @@ class BaseModel implements Model
         $primary_key = static::$primary_key;
         return Database::update(static::$table, $this->$primary_key, $params ,static::$primary_key);
     }
+
+    protected function hasOne($relation , $foreign_key)
+    {
+        $this->loadRelation($relation,static::$primary_key,$foreign_key,[],true);
+        $relation = strtolower(explode('\\',$relation)[2]);
+        return $this->$relation;
+    }
+
+    protected function belongTo($relation , $foreign_key)
+    {
+        $this->loadRelation($relation,static::$primary_key,$foreign_key,[],true);
+        $relation = strtolower(explode('\\',$relation)[2]);
+        return $this->$relation;
+    }
+
+    /**
+     * @param $relation
+     * @param $foreign_key
+     * @return QueryBuilder
+     */
+    protected function hasMany($relation , $foreign_key)
+    {
+        $primary_key = static::$primary_key;
+        $this->loadRelation($relation,static::$primary_key,$foreign_key,[]);
+        return $relation::query()->where([$foreign_key => $this->$primary_key]);
+    }
+
+    /**
+     * @param $pivot_relation
+     * @param $relation
+     * @param $pivot_foreign_key
+     * @param $pivot_foreign_key2
+     * @return QueryBuilder
+     */
+    protected function belongToMany($pivot_relation , $relation, $pivot_foreign_key, $pivot_foreign_key2)
+    {
+        $relation_class = $relation;
+        $relation_data=[];
+        $primary_key = static::$primary_key;
+
+        $data = $pivot_relation::where([$pivot_foreign_key2=> $this->$primary_key],[$pivot_foreign_key]);
+        $ids = [];
+
+        foreach ($data as $item)
+        {
+            $ids [] = $item->$pivot_foreign_key;
+        }
+        $relation_data = $relation::whereIn($relation::$primary_key,$ids);
+
+        $relation = strtolower(explode('\\',$relation)[2]) . 's';
+        $this->$relation = $relation_data;
+
+        $first_column = $relation_class::$table . '.' . $relation_class::$primary_key;
+        $second_column = $pivot_relation::$table . '.' . $pivot_foreign_key;
+        $third_column = $pivot_relation::$table . '.' . $pivot_foreign_key2;
+
+        $primary_key = static::$primary_key;
+
+        return $relation_class::query()
+            ->join( $pivot_relation::$table , $first_column , $second_column )
+            ->where([ $third_column => $this->$primary_key]);
+    }
+
+    public function load($relations)
+    {
+        $relations = func_get_args();
+        foreach ($relations as $relation)
+        {
+            $this->$relation();
+        }
+    }
+
+
 
 
 }

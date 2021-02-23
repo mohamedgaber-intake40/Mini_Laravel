@@ -44,6 +44,7 @@ class Connection
         {
             $result = false ;
             echo  $e->getMessage();
+            echo "<p>". $query. "</p>";
         }
         return $result;
     }
@@ -58,7 +59,7 @@ class Connection
 	    $params = array_values($params);
         $num = 0;
 
-        $result = self::excute($query,$params);
+        $result = self::execute($query,$params);
 
 	    if($result)
 	        $num = self::$conn->lastInsertId();
@@ -66,7 +67,7 @@ class Connection
 		return $num;
 	}
 
-	protected static function excute($query, $params = [])
+	protected static function execute($query, $params = [])
     {
         $result = false;
         $params = array_values($params);
@@ -89,7 +90,7 @@ class Connection
     public static function truncateTable($table)
     {
         $query = "truncate $table";
-        return  self::excute($query);
+        return  self::execute($query);
     }
 
     public static function close_Connection()
