@@ -12,16 +12,44 @@ class Route
     private  static $router;
     public $url ;
     public $controller;
-    public $controller_action;
-    public $request_method;
+    public $actionMethod;
+    public $requestMethod;
     public $params;
     public  $name;
 
-    public function __construct($url , $controller ,$request_method)
+    public function __construct($url , $action ,$requestMethod)
     {
-        $this->parseController($controller);
+        $this->parseAction($action);
         $this->url = $url;
-        $this->request_method = $request_method;
+        $this->requestMethod = $requestMethod;
+        $this->defineParams();
+    }
+
+    private function defineParams()
+    {
+        $matches = [];
+        preg_match_all('#\{(.*?)\}#',$this->url,$matches);
+        if(isset($matches[1][0]))
+        {
+            foreach ($matches[1] as $param)
+            {
+               $this->params[$param] = null;
+            }
+        }
+
+    }
+
+    public function setParamsValue($values)
+    {
+        if(count($values)){
+            $paramNames = array_keys($this->params);
+            foreach ($paramNames as $idx => $name)
+            {
+                $this->params[$name] = $values[$idx][0] ?? null;
+            }
+        }
+
+
     }
 
     public static function get($url , $controller)
@@ -67,15 +95,14 @@ class Route
     {
         if(!self::$router)
         {
-            self::$router = Router::get_instance();
+            self::$router = app()->getRouter();
         }
     }
 
-    public function parseController($controller)
+    public function parseAction($action)
     {
-        $arr = explode('@',$controller);
-        $this->controller = $arr[0];
-        $this->controller_action = $arr[1];
+        $this->controller = $action[0];
+        $this->actionMethod = $action[1];
     }
     public function name($name)
     {
@@ -87,5 +114,6 @@ class Route
 
         return $url == '/' ? URL : URL . $url;
     }
+
 
 }

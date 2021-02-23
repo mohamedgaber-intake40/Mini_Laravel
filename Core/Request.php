@@ -12,8 +12,9 @@ class Request
     public $query;
     public $full_url;
     public $headers;
+    private static $instance;
 
-    public function __construct()
+    private function __construct()
     {
         $this->full_url = trim($_SERVER["REQUEST_URI"]);
         $this->url = parse_url($this->full_url , PHP_URL_PATH);
@@ -42,6 +43,13 @@ class Request
 
     }
 
+    public static function getInstance()
+    {
+        if(!self::$instance)
+            self::$instance = new self;
+        return self::$instance;
+    }
+
     private function get_body_data()
     {
 
@@ -61,6 +69,11 @@ class Request
 
         $this->body = Validator::prepare($this->body);
 
+    }
+
+    public function ajax()
+    {
+        return $this->headers['Accept'] && $this->headers['Accept'] == 'application/json' ;
     }
 
     private function getPostData()
@@ -133,6 +146,11 @@ class Request
 
          if(isset($this->params[$property]))
              return $this->params[$property];
+    }
+
+    public function setParams($params)
+    {
+        $this->params = $params;
     }
 }
 
