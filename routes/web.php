@@ -6,24 +6,13 @@
  * Time: 11:51 AM
  */
 
+use app\Controllers\HomeController;
 use Core\Route;
 use Core\Router;
 
-Route::get('/','HomeController@index')->name('home');
-
-Route::get('register','AuthController@show')->name('register');
-Route::post('register','AuthController@register');
-Route::post('login','AuthController@login');
+Route::get('/',[HomeController::class,'index'])->name('home');
 
 
-Route::get('countries','CountryController@index')->name('countries.index');
-
-Route::get('users/export','UserController@export');
-
-Route::get('test','TestController@test')->name('test.show');
-Route::get('avatar','TestController@showAvatar')->name('avatar');
-Route::get('users/create','UserController@create')->name('users.create');
-Route::post('users','UserController@store')->name('users.store');
 
 
 
